@@ -234,6 +234,20 @@ class Resource():
         else:
             print("ERROR reading resource at {0}.".format(self.origpath))
             sys.exit(1)
+            
+            
+    def non-server-managed(self):
+        if self.location == "fcrepo":
+            full = self.graph
+            headers = {'prefer': 'return=minimal'}
+            minimal = requests.get(location=self.origpath,
+                                   auth=config.auth,
+                                   headers=headers
+                                   )
+            server_managed = 
+            
+        elif self.location == "local":
+            
 
 
 
@@ -260,8 +274,8 @@ def main():
                         )
         
     parser.add_argument('-u', '--user',
-                        help='''Repository credentials in the form 
-                                username:password.''',
+                        help='''repository credentials in the form 
+                                username:password''',
                         action='store',
                         type=credentials,
                         required=False,
@@ -269,30 +283,30 @@ def main():
                         )
     
     parser.add_argument('-c', '--csv',
-                        help='''Path to CSV file (to store summary data).''',
+                        help='''path to CSV file (to store summary data)''',
                         action='store',
                         required=False,
                         default=None
                         )
     
     parser.add_argument('-l', '--log',
-                        help='''Path to log file (to store details of 
-                        verification run).''',
+                        help='''path to log file (to store details of 
+                        verification run)''',
                         action='store',
                         required=False,
                         default=None
                         )
     
     parser.add_argument('-v', '--verbose',
-                        help='''Show detailed info for each resource checked on 
-                                screen.''',
+                        help='''show detailed info for each resource checked on 
+                                screen''',
                         action='store_true',
                         required=False,
                         default=False
                         )
                         
     parser.add_argument('configfile',
-                        help='''Path to an import/export config file.''',
+                        help='''path to an import/export config file''',
                         action='store'
                         )
                         
@@ -343,7 +357,12 @@ def main():
                             )
                 
                 elif original.type == 'rdf':
-                    if isomorphic(original.graph, destination.graph):
+                    if original.location == 'fcrepo':
+                        triples_to_check = original.graph
+                    elif original.location == 'local':
+                        triples_to_check = original.non-server-managed
+                
+                    if isomorphic(triples_to_check, destination.graph):
                         verified = True
                         verification = "{0} triples".format(
                                         len(original.graph)
