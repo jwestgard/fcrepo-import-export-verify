@@ -20,8 +20,11 @@ class Config():
         self.auth = auth
         self.output_dir = output_dir
         self.verbose = verbose
+
+        # initialize config defaults (will be overidden below if in config)
         self.bag = False
         self.versions = False
+        self.bin = False
         self.predicates = None
 
         with open(configfile, "r") as f:
@@ -29,9 +32,7 @@ class Config():
 
         opts = load(yaml_data, Loader=Loader)
 
-        # initialize binaries option (will be overidden below if in config)
-        self.bin = False
-        # interpret the options in the stored config file
+        # log the key/value pairs loaded from configuration
         console.info("Loaded the following configuration options:")
         pad = max([len(k) for k in opts.keys()])
         for key, value in opts.items():
@@ -39,6 +40,7 @@ class Config():
                 "  --> {:{align}{pad}} : {}".format(key, value,
                                                     pad=pad, align='>')
                 )
+            # perform special processing of configuration options as needed
             if key == "mode":
                 self.mode = value
             elif key == "external":
