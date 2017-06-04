@@ -123,11 +123,15 @@ class FedoraImportExportVerifier:
                             )
                         sys.exit(1)
 
-                    # skip binaries and fcr:metadata if no binaries exported
+                    # if binaries not included in export
                     if not config.bin:
+                        # skip binaries and fcr:metadata
                         if original.type == "binary" or \
                                 original.origpath.endswith("/fcr:metadata"):
                             continue
+                        # filter refs to binary resources from rdf resources
+                        else:
+                            original.filter_binary_refs()
 
                     # create object representing destination resource
                     if filepath.startswith(config.repobase):
@@ -153,11 +157,15 @@ class FedoraImportExportVerifier:
                                 original.sha1, destination.sha1
                                 )
                     elif original.type == "rdf":
+                        for (s,p,o) in original.graph:
+                            if (s,p,o) not in destination.graph:
+                                print((s,p,o))
                         if isomorphic(original.graph, destination.graph):
                             verified = True
                             verification = \
                                 "{0} triples".format(len(original.graph))
                         else:
+                            # print([(s,p,o) for (s,p,o) in destination.graph])
                             verified = False
                             verification = ("{0}+{1} triples - mismatch"
                                             .format(

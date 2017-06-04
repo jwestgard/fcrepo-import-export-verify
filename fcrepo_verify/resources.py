@@ -83,6 +83,12 @@ class FedoraResource(Resource):
     def is_binary(self):
         return self.ldp_type == LDP_NON_RDF_SOURCE
 
+    def filter_binary_refs(self):
+        for (s,p,o) in self.graph:
+            if o.startswith(self.config.repobase) and \
+                FedoraResource(o, self.config, self.logger).is_binary():
+                    self.graph.remove((s,p,o))
+
     def lookup_sha1(self):
         result = ""
         response = requests.get(self.metadata, auth=self.config.auth)
