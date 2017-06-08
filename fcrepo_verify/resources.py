@@ -7,7 +7,7 @@ import sys
 import os
 from urllib.parse import urlparse, quote
 from .constants import EXT_BINARY_INTERNAL, EXT_BINARY_EXTERNAL, \
-    LDP_NON_RDF_SOURCE
+    LDP_NON_RDF_SOURCE, MINIMAL_HEADER
 from .utils import get_data_dir, replace_strings_in_file
 
 
@@ -75,10 +75,18 @@ class FedoraResource(Resource):
                 (self.data_dir + self.relpath + self.config.ext)
                 )
             response = requests.get(self.origpath, auth=self.config.auth)
-            if response.status_code == 200:
+            minimal_response = requests.get(
+                self.origpath, auth=self.config.auth, headers=MINIMAL_HEADER
+                )
+            if response.status_code == 200 and \
+                minimal_response.status_code == 200:
                 self.graph = Graph().parse(
                     data=response.text, format="text/turtle"
                     )
+                self.minimal = Graph().parse(
+                    data=minimal_response.text, format="text/turtle"
+                    )
+                self.server_managed = self.graph - self.minimal
 
     def is_binary(self):
         return self.ldp_type == LDP_NON_RDF_SOURCE
