@@ -18,3 +18,5 @@ FEDORA_HAS_VERSIONS = \
 EXT_BINARY_INTERNAL = ".binary"
 EXT_BINARY_EXTERNAL = ".external"
 BAG_DATA_DIR = "/data"
+
+MINIMAL_HEADER = {"Prefer": "return=minimal"}
