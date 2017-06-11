@@ -59,5 +59,34 @@ def replace_strings_in_file(file, find_str, replace_str):
             for line in f:
                 line = line.replace(find_str, replace_str)
                 dest.write(line)
-
     return path
+
+
+def relaxed_compare(graph1, graph2):
+    '''Compare two graphs, but treat untyped literals as strings'''
+    # if graphs are really identical, comparison is true
+    if graph1 == graph2:
+        return True
+    # if different number of triples, comparison is false
+    elif len(graph1) != len(graph2):
+        return False
+    # otherwise, get the triples that are not identical in both graphs
+    else:
+        in_both, in_first, in_second = graph_diff(graph1, graph2)
+        # compare extra triples in first graph to second
+        for (s,p,o) in in_first:
+            v = in_second.value(subject=s, predicate=p)
+            if not o.eq(v):
+                return False
+            else:
+                pass
+        # compare extra triples in second graph to first
+        for (s,p,o) in in_second:
+            v = in_first.value(subject=s, predicate=p)
+            if not o.eq(v):
+                return False
+            else:
+                pass
+        # if no checks have failed to this point, the graphs are equal
+        return True
+
