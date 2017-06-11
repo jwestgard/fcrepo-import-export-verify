@@ -87,6 +87,8 @@ class FedoraResource(Resource):
                     data=minimal_response.text, format="text/turtle"
                     )
                 self.server_managed = self.graph - self.minimal
+            else:
+                console.error("Cannot verify RDF resource!")
 
     def is_binary(self):
         return self.ldp_type == LDP_NON_RDF_SOURCE
