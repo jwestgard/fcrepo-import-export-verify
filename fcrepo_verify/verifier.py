@@ -160,7 +160,6 @@ class FedoraImportExportVerifier:
                     elif original.type == "rdf":
                         # if legacyMode is set, filter graph on import
                         if config.legacyMode:
-                            print("Legacy Mode!")
                             if config.mode == "export":
                                 pass
                             elif config.mode == "import":
@@ -169,7 +168,6 @@ class FedoraImportExportVerifier:
                                     original.graph.remove(
                                         Graph().triples((None, p, None))
                                         )
-                                print(len(original.graph))
                                 destination.graph = destination.minimal
                         # compare the original and destination graphs
                         if isomorphic(original.graph, destination.graph):
@@ -177,7 +175,6 @@ class FedoraImportExportVerifier:
                             verification = \
                                 "{0} triples".format(len(original.graph))
                         else:
-                            # print([(s,p,o) for (s,p,o) in destination.graph])
                             verified = False
                             verification = ("{0}+{1} triples - mismatch"
                                             .format(
