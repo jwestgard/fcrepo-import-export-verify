@@ -1,5 +1,6 @@
 from .constants import LDP_NON_RDF_SOURCE
 from rdflib import Graph, URIRef
+from rdflib.compare import graph_diff
 import requests
 import sys
 import fileinput
@@ -74,14 +75,14 @@ def relaxed_compare(graph1, graph2):
     else:
         in_both, in_first, in_second = graph_diff(graph1, graph2)
         # compare extra triples in first graph to second
-        for (s,p,o) in in_first:
+        for (s, p ,o) in in_first:
             v = in_second.value(subject=s, predicate=p)
             if not o.eq(v):
                 return False
             else:
                 pass
         # compare extra triples in second graph to first
-        for (s,p,o) in in_second:
+        for (s, p ,o) in in_second:
             v = in_first.value(subject=s, predicate=p)
             if not o.eq(v):
                 return False
@@ -89,4 +90,3 @@ def relaxed_compare(graph1, graph2):
                 pass
         # if no checks have failed to this point, the graphs are equal
         return True
-

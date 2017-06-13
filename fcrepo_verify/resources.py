@@ -75,29 +75,28 @@ class FedoraResource(Resource):
                 (self.data_dir + self.relpath + self.config.ext)
                 )
             response = requests.get(self.origpath, auth=self.config.auth)
-            minimal_response = requests.get(
+            minimal_resp = requests.get(
                 self.origpath, auth=self.config.auth, headers=MINIMAL_HEADER
                 )
-            if response.status_code == 200 and \
-                minimal_response.status_code == 200:
+            if response.status_code == 200 and minimal_resp.status_code == 200:
                 self.graph = Graph().parse(
                     data=response.text, format="text/turtle"
                     )
                 self.minimal = Graph().parse(
-                    data=minimal_response.text, format="text/turtle"
+                    data=minimal_resp.text, format="text/turtle"
                     )
                 self.server_managed = self.graph - self.minimal
             else:
-                console.error("Cannot verify RDF resource!")
+                self.console.error("Cannot verify RDF resource!")
 
     def is_binary(self):
         return self.ldp_type == LDP_NON_RDF_SOURCE
 
     def filter_binary_refs(self):
-        for (s,p,o) in self.graph:
+        for (s, p, o) in self.graph:
             if o.startswith(self.config.repobase) and \
-                FedoraResource(o, self.config, self.logger).is_binary():
-                    self.graph.remove((s,p,o))
+                        FedoraResource(o, self.config, self.logger).is_binary():
+                self.graph.remove((s, p, o))
 
     def lookup_sha1(self):
         result = ""
