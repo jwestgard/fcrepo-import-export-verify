@@ -95,7 +95,7 @@ class FedoraResource(Resource):
     def filter_binary_refs(self):
         for (s, p, o) in self.graph:
             if o.startswith(self.config.repobase) and \
-                        FedoraResource(o, self.config, self.logger).is_binary():
+                    FedoraResource(o, self.config, self.logger).is_binary():
                 self.graph.remove((s, p, o))
 
     def lookup_sha1(self):
