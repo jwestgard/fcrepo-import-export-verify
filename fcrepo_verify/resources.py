@@ -49,7 +49,7 @@ class FedoraResource(Resource):
             self.headers = head_response.headers
             self.ldp_type = head_response.links["type"]["url"]
             self.external = True
-        elif head_response.status_code in [401, 403, 404]:
+        elif head_response.status_code in [401, 403, 404, 405]:
             self.is_reachable = False
             self.type = "unknown"
         else:
